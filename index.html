@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>myMemoPad</title>
+  <script src="js/jquery-2.1.3.min.js"></script>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/style(1).css">
+</head>
+
+<body>
+  <h1>タスク管理表</h1>
+  <main>
+    <p class="intro">タスクを登録してください!</p>
+
+    <dl>        
+      <dd><select id="task">
+          <option value="palceholder">種別</option>
+          <option>仕事</option>
+          <option>家事</option>
+          <option>遊び</option>
+          <option>その他</option>
+          </select> 
+      </dd>
+
+      <textarea id="content1" placeholder="登録日"></textarea>
+      <textarea id="content2" placeholder="完了日"></textarea>
+      
+        <dd><select id="content3">
+            <option value="palceholder">優先度</option>
+        <option></option>
+          <option>高</option>
+          <option>中</option>
+          <option>低</option>
+        </select>
+      </dd>
+    </dl>
+
+    <p><textarea id="content4" placeholder="To do"></textarea></p>
+    
+    <div class="button-area">
+      <button id="save">登録</button>
+      <button id="clear">全て削除</button>
+      <button id="display">表示</button>
+    </div>      
+  </main>
+
+  
+  </div>
+  <ul id="list">
+    <!-- ここに追加データが挿入される -->
+  </ul>
+  <footer>
+    Gs
+  </footer>
+  
+  <script>
+  // プルダウンにplaceholder と類似の装飾
+  $(function () {
+    $('select').on('change', function () {
+      if ($(this).val() == "placeholder") {
+        $(this).css('color', '#ddd')
+      } else {
+        $(this).css('color', '#333')
+      }
+    });
+  });
+
+//1. Save クリックイベント(入力されたvalを取得して、key (task) とvalue (content) をストレージへ格納
+  $("#save").on("click", function (){
+    const task = $("#task").val();
+    const content = {
+      登録 : $("#content1").val(),
+      期限 : $("#content2").val(),
+      優先度 : $("#content3").val(),
+      タスク: $("#content4").val(),
+    };
+  
+//2. JSONオブジェクトをJSON文字列に変換してローカルストレージに保存
+    localStorage.setItem(task, JSON.stringify(content));
+
+//ローカルストレージから取得してHTMLへ変換
+  //function displayTask(){
+  //ローカルストレージからデータ取得してオブジェクト変換
+    
+  })
+  const savedTask = JSON.parse(localStorage.getItem(task));
+  
+  //console.log(JSON.parse(localStorage.getItem(task)))
+// 3. データが存在する場合、表示処理を実行
+  $("#display").on("click", function () {
+    if (savedTask) {
+      const taskList = document.getElementById("list");
+      const listItem = document.createElement("li");
+      listItem.textContent = `種別: ${savedTask.task}, 登録日: ${savedTask.register}, 優先度: ${savedTask.priority}, 期限: deadline: ${savedTask.deadline}`;
+      // 項目別にをセルで分けて表示させたい  
+      taskList.appendChild(listItem);
+    }
+  })
+
+  //4. clear クリックイベント
+  $("#clear").on('click', function () {
+    // ローカルストレージを削除
+    localStorage.clear();
+      $("#list").empty()
+   })
+
+  //5. ページ読み込み：保存データ取得表示
+    //ローカルストレージに保存されているものをリロードした際(初期表示に)表示
+    for (let i = 0; i < localStorage.length; i++) {
+        // 保存されているデータを特定する
+        const task = localStorage.key(i);
+        const content = localStorage.getItem(task)
+        const html = `
+        <li>
+          <p>${task}</p>
+          <p>${content}</p>
+        
+        </li>
+      `
+        // htmlを追加
+        $("#list").append(html)
+      }
+
+  </script>
+</body>
+</html>
